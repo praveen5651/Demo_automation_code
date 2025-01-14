@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_HOME = "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python310\\python.exe"  // Path to your local Python installation
+        SCRIPT_PATH = "C:\\Users\\LENOVO\\PycharmProjects\\fitpeo\\Test_script.py"  // Path to your Python script
+    }
+
+    stages {
+        // 1. Verify Python Installation
+        stage('Verify Python') {
+            steps {
+                echo 'Checking Python version...'
+                bat "${PYTHON_HOME}\\python --version"  // For Windows
+                // sh "${PYTHON_HOME}/python3 --version"  // For Linux/Mac
+            }
+        }
+
+        // 2. Install Dependencies
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                bat """
+                ${PYTHON_HOME}\\python -m pip install --upgrade pip
+                ${PYTHON_HOME}\\python -m pip install selenium pytest
+                """
+            }
+        }
+
+        // 3. Run Python Script
+        stage('Run Python Script') {
+            steps {
+                echo 'Running the Python script...'
+                bat "${PYTHON_HOME}\\python ${SCRIPT_PATH}"  // For Windows
+                // sh "${PYTHON_HOME}/python3 ${SCRIPT_PATH}"  // For Linux/Mac
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for errors.'
+        }
+    }
+}
